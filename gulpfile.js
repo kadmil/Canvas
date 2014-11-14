@@ -96,13 +96,13 @@ gulp.task('build', function() {
     runSequence('clean', 'sass', 'scripts', 'html');
 });
 
-gulp.task('deploy', ['build'], function () {
-    return gulp.src('./app/**/*')
+gulp.task('deploy', ['build'], function() {
+    gulp.src(paths.dest.server + '/**/*')
         .pipe(deploy());
 });
 
 gulp.task('travis', ['deploy']);
 
-gulp.task('default', function(){
+gulp.task('default', function() {
     runSequence('build', 'startServer', 'watch');
 });
