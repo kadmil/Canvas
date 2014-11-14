@@ -17,7 +17,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "gulp"
+    "test": "gulp build"
   },
   "author": "Victor Suzdalev",
   "license": "MIT"
