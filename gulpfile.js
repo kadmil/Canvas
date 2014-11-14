@@ -6,10 +6,24 @@ var del = require('del');
 var uncss = require('gulp-uncss');
 var glob = require('glob');
 var browserify = require('gulp-browserify');
+var runSequence = require('run-sequence');
 
+var paths = {
+    source: {
+        html: './src/*.html',
+        scripts: './src/scripts/*.js',
+        sass: './src/sass/*.scss'
+    },
+    dest: {
+        server: './app',
+        html: './app',
+        css: './app/css',
+        scripts: './app/scripts'
+    }
+}
 gulp.task('startServer', function() {
     var serverOptions = {
-        root: '',
+        root: paths.dest.server,
         host: 'localhost',
         livereload: true,
         port: 9000
@@ -18,30 +32,44 @@ gulp.task('startServer', function() {
     open('http://localhost:' + serverOptions.port);
 });
 
-var paths = {
-    html: './*.html',
-    css: './css/*.css',
-    script: './scripts/*.js',
-    sass: './sass/*.scss'
-}
+gulp.task('clean', ['clean:css', 'clean:scripts', 'clean:html'], function(cb) {
+    cb();
+});
 
 gulp.task('clean:css', function(cb) {
     console.log('cleaning css');
-    del([paths.css], {
+    del([paths.dest.css + '/*.css'], {
+        force: true
+    }, cb);
+});
+
+
+gulp.task('clean:scripts', function(cb) {
+    console.log('cleaning scripts');
+    del([paths.dest.scripts + '/*.js'], {
+        force: true
+    }, cb);
+});
+
+
+gulp.task('clean:html', function(cb) {
+    console.log('cleaning html');
+    del([paths.dest.html + '/*.html'], {
         force: true
     }, cb);
 });
 
 gulp.task('sass', ['clean:css'], function() {
-    gulp.src([paths.sass]).pipe(sass({
+    gulp.src([paths.source.sass]).pipe(sass({
         errLogToConsole: true
     })).pipe(uncss({
-        html: glob.sync(paths.html)
-    })).pipe(gulp.dest('./css')).pipe(connect.reload());
+        html: glob.sync(paths.source.html)
+    })).pipe(gulp.dest(paths.dest.css)).pipe(connect.reload());
 });
 
 gulp.task('reload', function() {
-    gulp.src([paths.html, paths.script, paths.css])
+    console.log('reload');
+    gulp.src([paths.dest.html, paths.dest.scripts, paths.dest.css])
         .pipe(connect.reload());
 });
 
@@ -55,10 +83,19 @@ gulp.task('reload', function() {
 // });
 
 gulp.task('watch', function() {
-    gulp.watch([paths.sass], ['sass']);
-    gulp.watch([paths.html, paths.script, paths.css], ['reload']);
+    gulp.watch([paths.source.sass], ['sass']);
+    gulp.watch([paths.source.html, paths.source.scripts], function() {
+        runSequence('copy', 'reload');
+    });
 });
 
-gulp.task('build', ['sass']);
+gulp.task('copy', function() {
+    gulp.src(paths.source.html).pipe(gulp.dest(paths.dest.html));
+    gulp.src(paths.source.scripts).pipe(gulp.dest(paths.dest.scripts));
+});
+
+gulp.task('build', function() {
+    runSequence('clean', 'sass', 'copy');
+});
 
 gulp.task('default', ['build', 'startServer', 'watch']);
