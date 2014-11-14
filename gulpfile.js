@@ -96,7 +96,7 @@ gulp.task('build', function() {
     runSequence('clean', 'sass', 'scripts', 'html');
 });
 
-gulp.task('deploy', ['build'] function () {
+gulp.task('deploy', ['build'], function () {
     return gulp.src('./app/**/*')
         .pipe(deploy());
 });
