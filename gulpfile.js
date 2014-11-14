@@ -7,6 +7,7 @@ var uncss = require('gulp-uncss');
 var glob = require('glob');
 var browserify = require('gulp-browserify');
 var runSequence = require('run-sequence');
+var deploy = require('gulp-gh-pages');
 
 var paths = {
     source: {
@@ -94,6 +95,13 @@ gulp.task('html', function() {
 gulp.task('build', function() {
     runSequence('clean', 'sass', 'scripts', 'html');
 });
+
+gulp.task('deploy', ['build'] function () {
+    return gulp.src('./app/**/*')
+        .pipe(deploy());
+});
+
+gulp.task('travis', ['deploy']);
 
 gulp.task('default', function(){
     runSequence('build', 'startServer', 'watch');
