@@ -8,13 +8,14 @@
     display: -webkit-flex;
     display: flex;
 }
+$main-color : #00AEEF;
 body {
     @include flexbox;
     min-height: 100vh;
     flex-direction: column;
     margin: 0;
     font-family: 'Noto Serif', serif;
-    color: #00AEEF;
+    color: $main-color;
 }
 body>div {
     @include flexbox;
@@ -37,7 +38,7 @@ body>div {
             flex-direction: column;
             >div {
                 border-collapse: collapse;
-                border: 1px solid #00AEEF;
+                border: 1px solid $main-color;
             }
         }
     }
@@ -53,7 +54,7 @@ body>div {
     padding: 10px;
     width: 100%;
     color: white;
-    background: #00AEEF;
+    background: $main-color;
 }
 header {
     @include header-footer;

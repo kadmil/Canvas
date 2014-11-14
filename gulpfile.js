@@ -59,7 +59,7 @@ gulp.task('clean:html', function(cb) {
     }, cb);
 });
 
-gulp.task('sass', ['clean:css'], function() {
+gulp.task('sass', function() {
     gulp.src([paths.source.sass]).pipe(sass({
         errLogToConsole: true
     })).pipe(uncss({
@@ -67,35 +67,34 @@ gulp.task('sass', ['clean:css'], function() {
     })).pipe(gulp.dest(paths.dest.css)).pipe(connect.reload());
 });
 
-gulp.task('reload', function() {
-    console.log('reload');
-    gulp.src([paths.dest.html, paths.dest.scripts, paths.dest.css])
-        .pipe(connect.reload());
+gulp.task('scripts', function() {
+    gulp.src(paths.source.scripts)
+        .pipe(browserify({
+            insertGlobals: true
+        }))
+        .pipe(gulp.dest(paths.dest.scripts)).pipe(connect.reload());
 });
 
-// gulp.task('scripts', function() {
-//     gulp.src('src/js/app.js')
-//         .pipe(browserify({
-//           insertGlobals : true,
-//           debug : !gulp.env.production
-//         }))
-//         .pipe(gulp.dest('./build/js'))
-// });
-
 gulp.task('watch', function() {
-    gulp.watch([paths.source.sass], ['sass']);
-    gulp.watch([paths.source.html, paths.source.scripts], function() {
-        runSequence('copy', 'reload');
+    gulp.watch([paths.source.sass], function() {
+        runSequence('clean:css', 'sass');
+    });
+    gulp.watch([paths.source.scripts], function() {
+        runSequence('clean:scripts', 'scripts')
+    });
+    gulp.watch([paths.source.html], function() {
+        runSequence('clean:html', 'html');
     });
 });
 
-gulp.task('copy', function() {
-    gulp.src(paths.source.html).pipe(gulp.dest(paths.dest.html));
-    gulp.src(paths.source.scripts).pipe(gulp.dest(paths.dest.scripts));
+gulp.task('html', function() {
+    gulp.src(paths.source.html).pipe(gulp.dest(paths.dest.html)).pipe(connect.reload());
 });
 
 gulp.task('build', function() {
-    runSequence('clean', 'sass', 'copy');
+    runSequence('clean', 'sass', 'scripts', 'html');
 });
 
-gulp.task('default', ['build', 'startServer', 'watch']);
+gulp.task('default', function(){
+    runSequence('build', 'startServer', 'watch');
+});
