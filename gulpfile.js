@@ -255,11 +255,13 @@ gulp.task('img', function() {
 
 gulp.task('tags', function() {
     gulp.src(paths.source.tags)
+        .pipe(plumber())
         .pipe(riot({
             compact: true
         }))
         .pipe(uglifyjs('tags.js'))
-        .pipe(gulp.dest(paths.dest.tags));
+        .pipe(gulp.dest(paths.dest.tags))
+        .pipe(connect.reload());
 });
 
 gulp.task('build', ['clean'], function(cb) {

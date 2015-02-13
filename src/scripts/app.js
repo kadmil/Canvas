@@ -41,7 +41,7 @@ var canvasModels = {
 
 var canvas = riot.mount('canvas-model')[0];
 var model = canvas.children[0];
-debugger;
+
 model.update({
     opts: {
         rows: canvasModels.classic

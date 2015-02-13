@@ -12,6 +12,13 @@ canvas-model {
     margin: 0;
     color: $main-color;
     font-family: 'Noto Serif', serif;
+    header {
+        display: flex;
+        justify-content: space-around;
+        .active {
+            text-decoration: underline;
+        }
+    }
 }
 header, footer {
     text-align: center;
