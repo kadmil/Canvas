@@ -15,6 +15,9 @@ canvas-model {
     header {
         display: flex;
         justify-content: space-around;
+        h3 {
+            flex:1;
+        }
         .active {
             text-decoration: underline;
         }
