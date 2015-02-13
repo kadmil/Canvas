@@ -4,69 +4,49 @@
     <meta charset="utf-8">
     <title>Canvas</title>
     <link rel="stylesheet" href="./css/styles.css"></link>
-    <link href='http://fonts.googleapis.com/css?family=Noto+Serif:700|PT+Sans&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-    <script src="./scripts/app.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Noto+Serif|Roboto&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
     <header>
-        <span>Business model canvas</span>
+        <h3>Шаблон бизнес-модели</h3>
     </header>
-    <div>
-        <div>
-            <div>
-                <div>
-                    <label for='ta1'>Партнеры</label>
-                    <textarea id='ta1'></textarea>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <label for='ta2'>Деятельность</label>
-                    <textarea id='ta2'></textarea>
-                </div>
-                <div>
-                    <label for='ta3'>Ресурсы</label>
-                    <textarea id='ta3'></textarea>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <label for='ta4'>Ценностное предложение</label>
-                    <textarea id='ta4'></textarea>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <label for='ta5'>Отношения с клиентами</label>
-                    <textarea id='ta5'></textarea>
-                </div>
-                <div>
-                    <label for='ta6'>Каналы распространения</label>
-                    <textarea id='ta6'></textarea>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <label for='ta7'>Сегменты потребителей</label>
-                    <textarea id='ta7'></textarea>
-                </div>
-            </div>
-        </div>
-        <div>
-            <div>
-                <div>
-                    <label for='ta8'>Расходы</label>
-                    <textarea id='ta8'></textarea>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <label for='ta9'>Доходы</label>
-                    <textarea id='ta9'></textarea>
-                </div>
-            </div>
-        </div>
-    </div>
+    <model rows="{[[['Партнеры'],['Деятельность','Ресурсы'],['Ценностное предложение'],['Отношения с клиентами','Каналы распространения'],['Сегменты потребителей']],[['Расходы'],['Доходы']]]}">
+    </model>
     <footer>С ♥ от @kadmil</footer>
+
+    <script type="riot/tag">
+        <labeled-area>
+            <label for="area">{opts.label}</label>
+            <textarea id="area" onfocus={handler} onblur={handler}></textarea>
+            handler(event){
+             event.target.parentNode.classList.toggle('md-whiteframe-z3');
+         }
+        </labeled-area>
+    </script>
+
+    <script type="riot/tag">
+        <model-column>
+            <labeled-area each="{model in opts.models}" label="{ model }"></labeled-area>
+        </model-column>
+    </script>
+
+    <script type="riot/tag">
+        <model-row>
+            <model-column each="{models in opts.columns}" models="{models}"></model-column>
+        </model-row>
+    </script>
+
+    <script type="riot/tag">
+        <model>
+            <model-row each="{row in opts.rows}" columns="{row}"></model-column>
+        </model>
+    </script>
+
+    <!-- include riot.js and the compiler -->
+    <script src="//cdn.jsdelivr.net/g/riot@2.0(riot.min.js+compiler.min.js)"></script>
+
+    <script>
+    riot.mount('*');
+    </script>
 </body>
