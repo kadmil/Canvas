@@ -8,45 +8,9 @@
 </head>
 
 <body>
-    <header>
-        <h3>Шаблон бизнес-модели</h3>
-    </header>
-    <model rows="{[[['Партнеры'],['Деятельность','Ресурсы'],['Ценностное предложение'],['Отношения с клиентами','Каналы распространения'],['Сегменты потребителей']],[['Расходы'],['Доходы']]]}">
-    </model>
-    <footer>С ♥ от @kadmil</footer>
-
-    <script type="riot/tag">
-        <labeled-area>
-            <label for="area">{opts.label}</label>
-            <textarea id="area" onfocus={handler} onblur={handler}></textarea>
-            handler(event){
-             event.target.parentNode.classList.toggle('md-whiteframe-z3');
-         }
-        </labeled-area>
-    </script>
-
-    <script type="riot/tag">
-        <model-column>
-            <labeled-area each="{model in opts.models}" label="{ model }"></labeled-area>
-        </model-column>
-    </script>
-
-    <script type="riot/tag">
-        <model-row>
-            <model-column each="{models in opts.columns}" models="{models}"></model-column>
-        </model-row>
-    </script>
-
-    <script type="riot/tag">
-        <model>
-            <model-row each="{row in opts.rows}" columns="{row}"></model-column>
-        </model>
-    </script>
-
-    <!-- include riot.js and the compiler -->
-    <script src="//cdn.jsdelivr.net/g/riot@2.0(riot.min.js+compiler.min.js)"></script>
-
-    <script>
-    riot.mount('*');
-    </script>
+    <canvas-model></canvas-model>
+    <!-- include riot.js -->
+    <script src="//cdn.jsdelivr.net/g/riot@2.0(riot.min.js)"></script>
+    <script src="./tags/tags.js"></script>
+    <script src="./scripts/app.js"></script>
 </body>

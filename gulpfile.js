@@ -15,6 +15,7 @@ var usemin = require('gulp-usemin');
 var plumber = require('gulp-plumber');
 var replace = require('gulp-replace-task');
 var to5 = require('gulp-6to5');
+var riot = require('gulp-riot');
 
 var to5options = {
     loose: 'all',
@@ -32,6 +33,7 @@ paths.source = {
     sass: paths.sourceBase + 'styles/*.scss',
     img: paths.sourceBase + 'img/**/*.*',
     templates: paths.sourceBase + 'templates/**/*.html',
+    tags: paths.sourceBase + 'tags/**/*.tag',
     vendor: {
         scripts: paths.sourceBase + 'vendor/scripts/**/*.js',
         css: paths.sourceBase + 'vendor/styles/**/*.css',
@@ -47,6 +49,7 @@ paths.dest = {
     img: paths.destBase + 'img',
     templates: paths.destBase + 'templates',
     scripts: paths.destBase + 'scripts',
+    tags: paths.destBase + 'tags',
     vendor: {
         scripts: paths.destBase + 'vendor/scripts',
         css: paths.destBase + 'vendor/styles',
@@ -59,14 +62,16 @@ gulp.task('server', function() {
     var serverOptions = {
         root: paths.dest.server,
         host: 'localhost',
-        livereload: {port: 35731},
+        livereload: {
+            port: 35731
+        },
         port: 9002
     };
     connect.server(serverOptions);
     open('http://localhost:' + serverOptions.port);
 });
 
-gulp.task('clean', ['clean:css', 'clean:scripts', 'clean:html', 'clean:vendor-assets']);
+gulp.task('clean', ['clean:css', 'clean:scripts', 'clean:html', 'clean:tags', 'clean:vendor-assets']);
 
 gulp.task('clean:vendor-assets', ['clean:vendor-scripts', 'clean:vendor-css']);
 
@@ -75,6 +80,13 @@ gulp.task('clean:css', function(cb) {
         force: true
     }, cb);
 });
+
+gulp.task('clean:tags', function(cb) {
+    del([paths.dest.tags + '/**/*.js'], {
+        force: true
+    }, cb);
+});
+
 
 gulp.task('clean:vendor-scripts', function(cb) {
     del([paths.dest.vendor.scripts + '/*.js'], {
@@ -184,6 +196,9 @@ gulp.task('watch', ['build'], function() {
     gulp.watch([paths.source.templates], function() {
         runSequence('clean:templates', 'html:templates');
     });
+    gulp.watch([paths.source.tags], function() {
+        runSequence('clean:tags', 'tags');
+    })
 });
 
 gulp.task('html', ['html:main', 'html:templates']);
@@ -238,9 +253,17 @@ gulp.task('img', function() {
         .pipe(gulp.dest(paths.dest.img));
 });
 
+gulp.task('tags', function() {
+    gulp.src(paths.source.tags)
+        .pipe(riot({
+            compact: true
+        }))
+        .pipe(uglifyjs('tags.js'))
+        .pipe(gulp.dest(paths.dest.tags));
+});
 
 gulp.task('build', ['clean'], function(cb) {
-    runSequence('vendor-fonts', 'vendor-css', 'vendor-scripts', 'assets', 'sass', 'scripts', 'html', cb);
+    runSequence('vendor-fonts', 'vendor-css', 'vendor-scripts', 'assets', 'sass', 'tags', 'scripts', 'html', cb);
 });
 
 gulp.task('prod', ['clean'], function(cb) {
